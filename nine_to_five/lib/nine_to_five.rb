@@ -4,9 +4,12 @@ require "nine_to_five/railtie"
 module NineToFive
   mattr_accessor :start_hour
   @@start_hour = 9
+
   mattr_accessor :end_hour
   @@end_hour = 17
 
+  mattr_accessor :response
+  @@message = "Please come back during business hours"
 
   class Middleware
     def initialize(app)
@@ -21,7 +24,7 @@ module NineToFive
       if current_time.between?(start_time, end_time)
         @app.call(env)
       else
-        [200, {}, ["Please come back during business hours"]]
+        [403, {"Content-Type" => "text/html"}, [NineToFive.response]]
       end
     end
   end
